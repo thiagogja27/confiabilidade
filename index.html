@@ -1,135 +1,130 @@
 <html>
   <head>
-    <base
-      href="blob:https://party.websim.ai/24befb6a-f2db-4781-8d0f-1e6c90dfad64"
-    />
+    <base href="https://weighstation.rail-road.com/" />
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Simulação de Pesagem Ferroviária e Rodoviária</title>
-    <link
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;700&display=swap"
-      rel="stylesheet"
-    />
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <title>Sistema de Registro de Pesagem com Cálculo em Tempo Real</title>
     <style>
       body {
-        font-family: "Roboto", sans-serif;
+        font-family: Arial, sans-serif;
         line-height: 1.6;
         margin: 0;
         padding: 20px;
-        background-color: #121212;
-        color: #e0e0e0;
+        background-color: #f0f8ff;
       }
       h1,
       h2 {
-        color: #4caf50;
+        color: #00008b;
         text-align: center;
       }
+      #dashboard {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin: 100px auto 20px;
+        padding: 20px;
+        background-color: #f0f8ff;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        max-width: 1000px;
+      }
+      .dashboard-item {
+        width: 45%;
+        margin: 10px;
+        background-color: white;
+        border-radius: 10px;
+        box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+      }
+      .dashboard-value {
+        font-size: 24px;
+        font-weight: bold;
+        color: #007bff;
+        margin-bottom: 10px;
+        text-align: center;
+      }
+      .chart-container {
+        height: 200px;
+        width: 100%;
+      }
+      h4 {
+        text-align: center;
+        color: #333;
+        margin-top: 0;
+      }
+      #calculoTempoReal {
+        position: fixed;
+        top: 80px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 80%;
+        max-height: 80vh;
+        overflow-y: auto;
+        background-color: rgba(255, 255, 255, 0.8);
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        z-index: 1000;
+      }
       .container {
-        max-width: 1200px;
+        max-width: 800px;
         margin: 0 auto;
-        background-color: #1e1e1e;
+        background-color: white;
         padding: 20px;
         border-radius: 8px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
       }
       .balanca {
         margin-bottom: 20px;
-        padding: 20px;
-        border: 1px solid #333;
-        border-radius: 8px;
+        padding: 10px;
+        border: 1px solid #ccc;
+        border-radius: 4px;
         position: relative;
-        transition: all 0.3s ease;
-        background-color: #2a2a2a;
-      }
-      .balanca:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
       }
       .ferroviaria {
-        border-left: 5px solid #3f51b5;
+        background-color: #e6f2ff;
       }
       .rodoviaria {
-        border-left: 5px solid #ff9800;
+        background-color: #fff0f5;
       }
-      .form-group {
-        display: flex;
-        flex-wrap: wrap;
-        align-items: center;
-        margin-bottom: 15px;
-      }
-      .form-group label {
-        flex: 0 0 150px;
+      label {
+        display: inline-block;
+        width: 150px;
         margin-right: 10px;
-        color: #4caf50;
-      }
-      .form-group input,
-      .form-group select {
-        flex: 1;
-        min-width: 200px;
-        max-width: 250px;
       }
       input[type="number"],
       input[type="text"],
       select {
-        padding: 10px;
-        margin-bottom: 10px;
-        background-color: #333;
-        border: 1px solid #555;
-        color: #e0e0e0;
-        border-radius: 4px;
-        transition: all 0.3s ease;
-      }
-      input[type="number"]:focus,
-      input[type="text"]:focus,
-      select:focus {
-        outline: none;
-        border-color: #4caf50;
-        box-shadow: 0 0 5px rgba(76, 175, 80, 0.5);
+        width: 150px;
+        padding: 5px;
+        margin-bottom: 5px;
       }
       button {
         background-color: #4caf50;
         color: white;
-        padding: 12px 20px;
+        padding: 10px 15px;
         border: none;
         border-radius: 4px;
         cursor: pointer;
         font-size: 16px;
         margin-top: 10px;
-        transition: background-color 0.3s ease, transform 0.2s ease;
       }
       button:hover {
         background-color: #45a049;
-        transform: translateY(-2px);
-      }
-      button:active {
-        transform: translateY(0);
-      }
-      #generatePDF,
-      #toggleBalancas {
-        background-color: #3498db;
-        margin-right: 10px;
-      }
-      #generatePDF:hover,
-      #toggleBalancas:hover {
-        background-color: #2980b9;
       }
       #resultado {
         margin-top: 20px;
         font-weight: bold;
-        color: #4caf50;
       }
       #infoAdicional,
       #infoFuncionarios {
         margin-top: 20px;
-        padding: 15px;
-        background-color: #2a2a2a;
-        border-radius: 8px;
-        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        padding: 10px;
+        background-color: #f0f0f0;
+        border-radius: 4px;
       }
       .funcionario-info {
-        margin-bottom: 15px;
+        margin-bottom: 10px;
       }
       .sinaleiros {
         position: absolute;
@@ -143,179 +138,67 @@
         height: 30px;
         border-radius: 50%;
         margin-bottom: 5px;
-        transition: all 0.3s ease;
       }
       .sinaleiro-vermelho {
-        background-color: #ff4136;
-        animation: piscarVermelho 2s infinite;
+        background-color: #ff0000;
       }
       .sinaleiro-verde {
-        background-color: #2ecc40;
-        animation: piscarVerde 2s infinite;
+        background-color: #00ff00;
       }
-      @keyframes piscarVermelho {
-        0%,
-        49% {
-          opacity: 1;
-          box-shadow: 0 0 20px #ff4136;
-        }
-        50%,
-        100% {
-          opacity: 0.3;
-          box-shadow: none;
-        }
+      .sinaleiro-ativo {
+        opacity: 1;
+        box-shadow: 0 0 20px;
       }
-      @keyframes piscarVerde {
-        0%,
-        49% {
-          opacity: 0.3;
-          box-shadow: none;
-        }
-        50%,
-        100% {
-          opacity: 1;
-          box-shadow: 0 0 20px #2ecc40;
-        }
+      .sinaleiro-inativo {
+        opacity: 0.3;
+        box-shadow: none;
       }
-      #calculoTempoReal {
+      #toggleDisplay {
         position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        background-color: rgba(42, 42, 42, 0.9);
-        padding: 15px;
-        box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3);
-        z-index: 1000;
-        max-height: 50vh;
-        overflow-y: auto;
-        color: #e0e0e0;
+        top: 10px;
+        right: 10px;
+        z-index: 1001;
       }
       .diferenca-alerta {
-        color: #ff4136;
+        color: red;
         font-weight: bold;
-        animation: pulsar 1.5s infinite;
-      }
-      @keyframes pulsar {
-        0% {
-          transform: scale(1);
-        }
-        50% {
-          transform: scale(1.05);
-        }
-        100% {
-          transform: scale(1);
-        }
-      }
-      #balancasContainer {
-        display: flex;
-        flex-wrap: wrap;
-        justify-content: space-around;
-      }
-      .balanca {
-        width: 45%;
-        margin-bottom: 20px;
-      }
-      #dashboard {
-        margin-top: 30px;
-        padding: 20px;
-        background-color: #2a2a2a;
-        border-radius: 8px;
-        box-shadow: 0 0 20px rgba(0, 0, 0, 0.3);
-      }
-      .chart-container {
-        margin-bottom: 30px;
-        position: relative;
-        height: 300px;
-      }
-      @keyframes fadeInUp {
-        from {
-          opacity: 0;
-          transform: translateY(20px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-      .fade-in-up {
-        animation: fadeInUp 0.5s ease-out;
-      }
-      #relatorio {
-        background-color: #333;
-        padding: 15px;
-        border-radius: 8px;
-        margin-top: 20px;
-      }
-      #relatorio h3,
-      #relatorio h4 {
-        color: #4caf50;
-      }
-      #relatorio ul {
-        list-style-type: none;
-        padding-left: 0;
-      }
-      #relatorio li {
-        margin-bottom: 10px;
-        padding: 10px;
-        background-color: #2a2a2a;
-        border-radius: 4px;
-        transition: all 0.3s ease;
-      }
-      #relatorio li:hover {
-        transform: translateX(5px);
-        box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-      }
-      .modal {
-        display: none;
-        position: fixed;
-        z-index: 1000;
-        left: 0;
-        top: 0;
-        width: 100%;
-        height: 100%;
-        overflow: auto;
-        background-color: rgba(0, 0, 0, 0.4);
-      }
-      .modal-content {
-        background-color: #2a2a2a;
-        margin: 15% auto;
-        padding: 20px;
-        border: 1px solid #888;
-        width: 80%;
-        max-width: 800px;
-        color: #e0e0e0;
-      }
-      .close {
-        color: #aaa;
-        float: right;
-        font-size: 28px;
-        font-weight: bold;
-      }
-      .close:hover,
-      .close:focus {
-        color: #4caf50;
-        text-decoration: none;
-        cursor: pointer;
-      }
-      .button-container {
-        margin-top: 20px;
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-      }
-      .button-container button {
-        flex: 1;
-        max-width: 200px;
       }
     </style>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2canvas/1.4.1/html2canvas.min.js"></script>
   </head>
   <body>
-    <div class="container">
-      <h1>Simulação de Pesagem Ferroviária e Rodoviária</h1>
+    <div id="calculoTempoReal">
+      <h3>Cálculos em Tempo Real</h3>
+      <div id="calculoConteudo"></div>
+    </div>
 
-      <div class="form-group">
+    <button id="toggleDisplay" onclick="toggleDisplayVisibility()">
+      Ativar/Desativar Display
+    </button>
+
+    <div id="dashboard">
+      <div class="dashboard-item">
+        <h4>Diferenças de Peso</h4>
+        <div class="chart-container">
+          <canvas id="weightDifferenceChart"></canvas>
+        </div>
+      </div>
+      <div class="dashboard-item">
+        <h4>Pesagens das Balanças</h4>
+        <div class="chart-container">
+          <canvas id="scaleReadingsChart"></canvas>
+        </div>
+      </div>
+    </div>
+
+    <div class="container">
+      <h1>Sistema de Registro de Pesagem Ferroviária e Rodoviária</h1>
+
+      <div>
         <label for="tipoVeiculo">Tipo de Veículo:</label>
-        <select id="tipoVeiculo" onchange="atualizarInfoAdicional()">
+        <select id="tipoVeiculo" onchange="mostrarBalancas()">
           <option value="pc">PC</option>
           <option value="caminhao">Caminhão</option>
           <option value="vagao">Vagão</option>
@@ -323,76 +206,41 @@
       </div>
 
       <div id="infoAdicional">
-        <div id="infoPlaca" class="form-group">
+        <div id="infoPlaca">
           <label for="placa">Placa:</label>
           <input type="text" id="placa" />
         </div>
-        <div id="infoMotorista" class="form-group">
+        <div id="infoMotorista">
           <label for="motorista">Motorista:</label>
           <input type="text" id="motorista" />
         </div>
       </div>
 
       <div id="infoFuncionarios">
-        <div class="funcionario-info form-group">
+        <div class="funcionario-info">
           <label for="nomeAssistente">Nome do Assistente:</label>
           <input type="text" id="nomeAssistente" />
         </div>
-        <div class="funcionario-info form-group">
+        <div class="funcionario-info">
           <label for="turnoAssistente">Turno do Assistente:</label>
           <select id="turnoAssistente">
-            <option value="turnoA">Turno A</option>
-            <option value="turnoB">Turno B</option>
-            <option value="turnoC">Turno C</option>
-            <option value="turnoD">Turno D</option>
+            <option value="manha">Manhã</option>
+            <option value="tarde">Tarde</option>
+            <option value="noite">Noite</option>
           </select>
         </div>
-        <div class="funcionario-info form-group">
+        <div class="funcionario-info">
           <label for="nomeSeguranca">Nome do Segurança:</label>
           <input type="text" id="nomeSeguranca" />
         </div>
       </div>
 
-      <div class="form-group">
-        <label for="selectBalanca">Selecionar Balança:</label>
-        <select
-          id="selectBalanca"
-          onchange="mostrarBalancaSelecionada()"
-        ></select>
-      </div>
+      <div id="balancas"></div>
 
-      <button id="toggleBalancas" onclick="toggleTodasBalancas()">
-        Mostrar Todas as Balanças
+      <div id="resultado"></div>
+      <button id="downloadReport" onclick="generatePDF()">
+        Baixar Relatório Completo (PDF)
       </button>
-
-      <div id="balancasContainer"></div>
-
-      <div class="button-container">
-        <button onclick="gerarDashboard()">Gerar Dashboard</button>
-        <button id="generatePDF" onclick="showReportModal()">
-          Gerar Relatório PDF
-        </button>
-      </div>
-
-      <div id="dashboard" style="display: none">
-        <h2>Dashboard</h2>
-        <div class="chart-container">
-          <canvas id="pesagemChart"></canvas>
-        </div>
-        <div class="chart-container">
-          <canvas id="diferencaChart"></canvas>
-        </div>
-        <div id="relatorio"></div>
-      </div>
-
-      <div id="reportModal" class="modal">
-        <div class="modal-content">
-          <span class="close">&times;</span>
-          <div id="reportContent"></div>
-          <button onclick="printReport()">Imprimir Relatório</button>
-          <button onclick="generatePDFReport()">Baixar PDF</button>
-        </div>
-      </div>
     </div>
 
     <script>
@@ -408,55 +256,126 @@
         { id: 6, tipo: "rodoviaria", acompanhamento: true },
       ];
 
-      let pesagens = [];
-      let balancaData = {};
-      let pesagemChart = null;
-      let diferencaChart = null;
+      let weightDifferenceChart, scaleReadingsChart;
 
-      let allBalancasVisible = false;
+      function createCharts() {
+        const ctx1 = document
+          .getElementById("weightDifferenceChart")
+          .getContext("2d");
+        weightDifferenceChart = new Chart(ctx1, {
+          type: "bar",
+          data: {
+            labels: [],
+            datasets: [
+              {
+                label: "Diferença de Peso (kg)",
+                data: [],
+                backgroundColor: "rgba(75, 192, 192, 0.6)",
+                borderColor: "rgba(75, 192, 192, 1)",
+                borderWidth: 1,
+              },
+            ],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: "Diferença (kg)",
+                },
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: "Balanças",
+                },
+              },
+            },
+          },
+        });
 
-      function inicializarSelectBalanca() {
-        const selectBalanca = document.getElementById("selectBalanca");
-        selectBalanca.innerHTML =
-          '<option value="">Selecione uma balança</option>';
-        balancas.forEach((balanca) => {
-          const option = document.createElement("option");
-          option.value = balanca.id;
-          option.textContent = `Balança ${balanca.id} (${balanca.tipo})`;
-          selectBalanca.appendChild(option);
+        const ctx2 = document
+          .getElementById("scaleReadingsChart")
+          .getContext("2d");
+        scaleReadingsChart = new Chart(ctx2, {
+          type: "line",
+          data: {
+            labels: [],
+            datasets: [],
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            scales: {
+              y: {
+                beginAtZero: true,
+                title: {
+                  display: true,
+                  text: "Peso (kg)",
+                },
+              },
+              x: {
+                title: {
+                  display: true,
+                  text: "Balanças",
+                },
+              },
+            },
+          },
         });
       }
 
-      function criarInputsBalanca(balanca) {
-        const balancaDiv = document.createElement("div");
-        balancaDiv.className = `balanca ${balanca.tipo}`;
-        balancaDiv.id = `balanca-${balanca.id}`;
+      function updateCharts(pesosBalancas, diferencas) {
+        weightDifferenceChart.data.labels = diferencas.map(
+          (d) => `${d.balanca1} - ${d.balanca2}`
+        );
+        weightDifferenceChart.data.datasets[0].data = diferencas.map(
+          (d) => d.diferenca
+        );
+        weightDifferenceChart.update();
 
-        const savedData = balancaData[balanca.id] || {};
+        scaleReadingsChart.data.labels = pesosBalancas.map(
+          (b) => `Balança ${b.id}`
+        );
+        scaleReadingsChart.data.datasets = [
+          {
+            label: "Peso Médio",
+            data: pesosBalancas.map((b) => b.peso),
+            borderColor: "rgb(75, 192, 192)",
+            tension: 0.1,
+          },
+        ];
+        scaleReadingsChart.update();
+      }
 
-        balancaDiv.innerHTML = `
+      function criarInputsBalanca(balancasFiltradas) {
+        const balancasDiv = document.getElementById("balancas");
+        balancasDiv.innerHTML = "";
+        balancasFiltradas.forEach((balanca) => {
+          const balancaDiv = document.createElement("div");
+          balancaDiv.className = `balanca ${balanca.tipo}`;
+          balancaDiv.innerHTML = `
             <h3>Balança ${balanca.id} (${balanca.tipo})</h3>
-            <div class="form-group">
+            <div>
               <label for="ponta-mar-${balanca.id}">Ponta Mar:</label>
               <input type="number" id="ponta-mar-${
                 balanca.id
-              }" step="0.1" value="${
-          savedData.pontaMar || ""
-        }" oninput="calcularDiferencaTempoReal(${balanca.id})">
+              }" step="0.1" oninput="calcularDiferencaTempoReal()">
             </div>
-            <div class="form-group">
+            <div>
               <label for="meio-${balanca.id}">Meio:</label>
-              <input type="number" id="meio-${balanca.id}" step="0.1" value="${
-          savedData.meio || ""
-        }" oninput="calcularDiferencaTempoReal(${balanca.id})">
+              <input type="number" id="meio-${
+                balanca.id
+              }" step="0.1" oninput="calcularDiferencaTempoReal()">
             </div>
-            <div class="form-group">
-              <label for="ponta-terra-${balanca.id}">Ponta Terra:</label>
+            <div>
+              <label for="ponta-terra-${balanca.id}">Punta Terra:</label>
               <input type="number" id="ponta-terra-${
                 balanca.id
-              }" step="0.1" value="${
-          savedData.pontaTerra || ""
-        }" oninput="calcularDiferencaTempoReal(${balanca.id})">
+              }" step="0.1" oninput="calcularDiferencaTempoReal()">
             </div>
             ${
               balanca.acompanhamento
@@ -468,282 +387,219 @@
               <div class="sinaleiro sinaleiro-verde"></div>
             </div>
           `;
-        return balancaDiv;
-      }
-
-      function mostrarBalancaSelecionada() {
-        if (!allBalancasVisible) {
-          const balancasContainer =
-            document.getElementById("balancasContainer");
-          const selectedBalancaId =
-            document.getElementById("selectBalanca").value;
-
-          const currentBalanca = balancasContainer.querySelector(".balanca");
-          if (currentBalanca) {
-            const currentId = currentBalanca.id.split("-")[1];
-            salvarDadosBalanca(currentId);
-          }
-
-          balancasContainer.innerHTML = "";
-          if (selectedBalancaId) {
-            const balanca = balancas.find((b) => b.id == selectedBalancaId);
-            balancasContainer.appendChild(criarInputsBalanca(balanca));
-          }
-        }
-      }
-
-      function salvarDadosBalanca(balancaId) {
-        balancaData[balancaId] = {
-          pontaMar: document.getElementById(`ponta-mar-${balancaId}`).value,
-          meio: document.getElementById(`meio-${balancaId}`).value,
-          pontaTerra: document.getElementById(`ponta-terra-${balancaId}`).value,
-        };
-      }
-
-      function mostrarTodasBalancas() {
-        const balancasContainer = document.getElementById("balancasContainer");
-
-        const currentBalanca = balancasContainer.querySelector(".balanca");
-        if (currentBalanca) {
-          const currentId = currentBalanca.id.split("-")[1];
-          salvarDadosBalanca(currentId);
-        }
-
-        balancasContainer.innerHTML = "";
-        balancas.forEach((balanca) => {
-          balancasContainer.appendChild(criarInputsBalanca(balanca));
+          balancasDiv.appendChild(balancaDiv);
         });
       }
 
-      function toggleTodasBalancas() {
-        allBalancasVisible = !allBalancasVisible;
-        const balancasContainer = document.getElementById("balancasContainer");
-        const toggleButton = document.getElementById("toggleBalancas");
-
-        if (allBalancasVisible) {
-          mostrarTodasBalancas();
-          toggleButton.textContent = "Ocultar Todas as Balanças";
-        } else {
-          balancasContainer.innerHTML = "";
-          toggleButton.textContent = "Mostrar Todas as Balanças";
-        }
-      }
-
-      function calcularDiferencaTempoReal(balancaId) {
-        const pontaMar =
-          parseFloat(document.getElementById(`ponta-mar-${balancaId}`).value) ||
-          0;
-        const meio =
-          parseFloat(document.getElementById(`meio-${balancaId}`).value) || 0;
-        const pontaTerra =
-          parseFloat(
-            document.getElementById(`ponta-terra-${balancaId}`).value
-          ) || 0;
-
-        balancaData[balancaId] = { pontaMar, meio, pontaTerra };
-
-        const diferencaPontaMarMeio = Math.abs(pontaMar - meio);
-        const diferencaPontaMarPontaTerra = Math.abs(pontaMar - pontaTerra);
-        const diferencaMeioPontaTerra = Math.abs(meio - pontaTerra);
-
-        const diferencaMaxima = Math.max(
-          diferencaPontaMarMeio,
-          diferencaPontaMarPontaTerra,
-          diferencaMeioPontaTerra
-        );
-
-        const balancaDiv = document.getElementById(`balanca-${balancaId}`);
-        const resultadoDiv =
-          balancaDiv.querySelector(".resultado") ||
-          document.createElement("div");
-        resultadoDiv.className = "resultado";
-        resultadoDiv.innerHTML = `
-            <p>Diferença Máxima: ${diferencaMaxima.toFixed(1)} kg</p>
-            ${
-              diferencaMaxima > 60
-                ? '<p class="diferenca-alerta">Alerta: Diferença maior que 60 kg!</p>'
-                : ""
-            }
-          `;
-        balancaDiv.appendChild(resultadoDiv);
-
-        const pesagemIndex = pesagens.findIndex(
-          (p) => p.balancaId === balancaId
-        );
-        if (pesagemIndex !== -1) {
-          pesagens[pesagemIndex] = {
-            balancaId,
-            pontaMar,
-            meio,
-            pontaTerra,
-            diferencaMaxima,
-          };
-        } else {
-          pesagens.push({
-            balancaId,
-            pontaMar,
-            meio,
-            pontaTerra,
-            diferencaMaxima,
-          });
-        }
-      }
-
-      function atualizarInfoAdicional() {
+      function mostrarBalancas() {
         const tipoVeiculo = document.getElementById("tipoVeiculo").value;
         const infoMotorista = document.getElementById("infoMotorista");
 
         if (tipoVeiculo === "vagao") {
+          const balancasFerroviarias = balancas.filter(
+            (balanca) => balanca.tipo === "ferroviaria"
+          );
+          criarInputsBalanca(balancasFerroviarias);
           infoMotorista.style.display = "none";
         } else {
+          criarInputsBalanca(balancas);
           infoMotorista.style.display = "block";
         }
+        calcularDiferencaTempoReal();
       }
 
-      function showReportModal() {
-        const modal = document.getElementById("reportModal");
-        const reportContent = document.getElementById("reportContent");
-        reportContent.innerHTML = generateReportHTML();
-        modal.style.display = "block";
+      function calcularDiferencaTempoReal() {
+        const calculoConteudo = document.getElementById("calculoConteudo");
+        calculoConteudo.innerHTML = "";
 
-        const closeBtn = modal.querySelector(".close");
-        closeBtn.onclick = function () {
-          modal.style.display = "none";
-        };
+        const balancasVisiveis = document.querySelectorAll(".balanca");
+        let diferencaMaximaGlobal = 0;
+        let balancaComMaiorDiferencaGlobal = null;
+        let diferencaMaximaEntreBalancas = 0;
+        let balancasComMaiorDiferenca = null;
 
-        window.onclick = function (event) {
-          if (event.target == modal) {
-            modal.style.display = "none";
-          }
-        };
-      }
+        const pesosBalancas = [];
+        const diferencas = [];
 
-      function generateReportHTML() {
-        return `
-            <h3>Relatório de Pesagem</h3>
-            <p><strong>Tipo de Veículo:</strong> ${
-              document.getElementById("tipoVeiculo").value
-            }</p>
-            <p><strong>Placa:</strong> ${
-              document.getElementById("placa").value
-            }</p>
-            <p><strong>Motorista:</strong> ${
-              document.getElementById("motorista").value
-            }</p>
-            <p><strong>Assistente:</strong> ${
-              document.getElementById("nomeAssistente").value
-            } (Turno: ${document.getElementById("turnoAssistente").value})</p>
-            <p><strong>Segurança:</strong> ${
-              document.getElementById("nomeSeguranca").value
-            }</p>
-            <h4>Resumo das Pesagens:</h4>
-            <ul>
-              ${pesagens
-                .map(
-                  (p) => `
-                <li>Balança ${p.balancaId}: 
-                  Ponta Mar: <strong>${p.pontaMar.toFixed(1)}</strong> kg, 
-                  Meio: <strong>${p.meio.toFixed(1)}</strong> kg, 
-                  Ponta Terra: <strong>${p.pontaTerra.toFixed(1)}</strong> kg, 
-                  Diferença Máxima: <strong>${p.diferencaMaxima.toFixed(
-                    1
-                  )}</strong> kg
-                  ${
-                    p.diferencaMaxima > 60
-                      ? '<span class="diferenca-alerta"> (Alerta: > 60 kg)</span>'
-                      : ""
-                  }
-                </li>
-              `
-                )
-                .join("")}
-            </ul>
-          `;
-      }
+        balancasVisiveis.forEach((balancaDiv) => {
+          const id = balancaDiv.querySelector("h3").textContent.match(/\d+/)[0];
+          const pontaMar =
+            parseFloat(document.getElementById(`ponta-mar-${id}`).value) || 0;
+          const meio =
+            parseFloat(document.getElementById(`meio-${id}`).value) || 0;
+          const pontaTerra =
+            parseFloat(document.getElementById(`ponta-terra-${id}`).value) || 0;
 
-      function generatePDFReport() {
-        const { jsPDF } = window.jspdf;
-        const doc = new jsPDF();
+          const diferencaPontaMarMeio = Math.abs(pontaMar - meio);
+          const diferencaPontaMarPontaTerra = Math.abs(pontaMar - pontaTerra);
+          const diferencaMeioPontaTerra = Math.abs(meio - pontaTerra);
 
-        doc.setFontSize(18);
-        doc.text("Relatório de Pesagem", 105, 15, null, null, "center");
-
-        doc.setFontSize(12);
-        doc.text(
-          `Tipo de Veículo: ${document.getElementById("tipoVeiculo").value}`,
-          20,
-          30
-        );
-        doc.text(`Placa: ${document.getElementById("placa").value}`, 20, 40);
-        doc.text(
-          `Motorista: ${document.getElementById("motorista").value}`,
-          20,
-          50
-        );
-        doc.text(
-          `Assistente: ${
-            document.getElementById("nomeAssistente").value
-          } (Turno: ${document.getElementById("turnoAssistente").value})`,
-          20,
-          60
-        );
-        doc.text(
-          `Segurança: ${document.getElementById("nomeSeguranca").value}`,
-          20,
-          70
-        );
-
-        doc.text("Resumo das Pesagens:", 20, 90);
-
-        let yPos = 100;
-        pesagens.forEach((p, index) => {
-          doc.text(`Balança ${p.balancaId}:`, 30, yPos);
-          doc.text(`Ponta Mar: ${p.pontaMar.toFixed(1)} kg`, 40, yPos + 10);
-          doc.text(`Meio: ${p.meio.toFixed(1)} kg`, 40, yPos + 20);
-          doc.text(`Ponta Terra: ${p.pontaTerra.toFixed(1)} kg`, 40, yPos + 30);
-          doc.text(
-            `Diferença Máxima: ${p.diferencaMaxima.toFixed(1)} kg`,
-            40,
-            yPos + 40
+          const diferencaMaxima = Math.max(
+            diferencaPontaMarMeio,
+            diferencaPontaMarPontaTerra,
+            diferencaMeioPontaTerra
           );
 
-          if (p.diferencaMaxima > 60) {
-            doc.setTextColor(255, 0, 0);
-            doc.text("(Alerta: > 60 kg)", 120, yPos + 40);
-            doc.setTextColor(0, 0, 0);
+          pesosBalancas.push({ id, peso: (pontaMar + meio + pontaTerra) / 3 });
+
+          if (diferencaMaxima > diferencaMaximaGlobal) {
+            diferencaMaximaGlobal = diferencaMaxima;
+            balancaComMaiorDiferencaGlobal = id;
           }
 
-          yPos += 50;
+          const balancaResultado = document.createElement("div");
+          balancaResultado.innerHTML = `
+            <h4>Balança ${id}</h4>
+            <p>Diferença Ponta Mar - Meio: ${diferencaPontaMarMeio.toFixed(
+              1
+            )} kg</p>
+            <p>Diferença Ponta Mar - Ponta Terra: ${diferencaPontaMarPontaTerra.toFixed(
+              1
+            )} kg</p>
+            <p>Diferença Meio - Ponta Terra: ${diferencaMeioPontaTerra.toFixed(
+              1
+            )} kg</p>
+            <p>Diferença Máxima: ${diferencaMaxima.toFixed(1)} kg</p>
+          `;
 
-          if (yPos > 250 && index < pesagens.length - 1) {
-            doc.addPage();
-            yPos = 20;
+          if (diferencaMaxima > 40) {
+            balancaResultado.innerHTML += `<p class="diferenca-alerta">Alerta: Diferença maior que 40 kg!</p>`;
+          }
+
+          calculoConteudo.appendChild(balancaResultado);
+
+          const sinalVermelho = balancaDiv.querySelector(".sinaleiro-vermelho");
+          const sinalVerde = balancaDiv.querySelector(".sinaleiro-verde");
+
+          if (diferencaMaxima > 40) {
+            sinalVermelho.classList.add("sinaleiro-ativo");
+            sinalVermelho.classList.remove("sinaleiro-inativo");
+            sinalVerde.classList.add("sinaleiro-inativo");
+            sinalVerde.classList.remove("sinaleiro-ativo");
+          } else {
+            sinalVermelho.classList.add("sinaleiro-inativo");
+            sinalVermelho.classList.remove("sinaleiro-ativo");
+            sinalVerde.classList.add("sinaleiro-ativo");
+            sinalVerde.classList.remove("sinaleiro-inativo");
           }
         });
 
-        doc.save("relatorio_pesagem.pdf");
+        for (let i = 0; i < pesosBalancas.length; i++) {
+          for (let j = i + 1; j < pesosBalancas.length; j++) {
+            const diferenca = Math.abs(
+              pesosBalancas[i].peso - pesosBalancas[j].peso
+            );
+            diferencas.push({
+              balanca1: pesosBalancas[i].id,
+              balanca2: pesosBalancas[j].id,
+              diferenca: diferenca,
+            });
+          }
+        }
+
+        updateCharts(pesosBalancas, diferencas);
+
+        const resultadoGlobal = document.createElement("div");
+        resultadoGlobal.innerHTML = `
+          <h4>Resultado Global</h4>
+          <p>Maior diferença encontrada na mesma balança: ${diferencaMaximaGlobal.toFixed(
+            1
+          )} kg na Balança ${balancaComMaiorDiferencaGlobal}</p>
+        `;
+        if (diferencaMaximaGlobal > 40) {
+          resultadoGlobal.innerHTML += `<p class="diferenca-alerta">Alerta: Diferença na mesma balança maior que 40 kg!</p>`;
+        }
+        calculoConteudo.appendChild(resultadoGlobal);
       }
 
-      function printReport() {
-        const reportContent =
-          document.getElementById("reportContent").innerHTML;
-        const printWindow = window.open("", "", "height=600,width=800");
-        printWindow.document.write(
-          "<html><head><title>Relatório de Pesagem</title>"
-        );
-        printWindow.document.write(
-          "<style>body { font-family: Arial, sans-serif; }</style>"
-        );
-        printWindow.document.write("</head><body>");
-        printWindow.document.write(reportContent);
-        printWindow.document.write("</body></html>");
-        printWindow.document.close();
-        printWindow.print();
+      function toggleDisplayVisibility() {
+        const display = document.getElementById("calculoTempoReal");
+        display.style.display =
+          display.style.display === "none" ? "block" : "none";
+      }
+
+      function generatePDF() {
+        const { jsPDF } = window.jspdf;
+        const pdf = new jsPDF();
+
+        // Add title
+        pdf.setFontSize(18);
+        pdf.text("Relatório de Pesagem", 14, 20);
+
+        // Add dashboard information
+        pdf.setFontSize(14);
+        pdf.text("Dados do Dashboard", 14, 30);
+
+        // Get chart data
+        const weightDiffData = weightDifferenceChart.data;
+        const scaleReadingsData = scaleReadingsChart.data;
+
+        pdf.setFontSize(12);
+        pdf.text("Diferenças de Peso:", 14, 40);
+        let yPos = 50;
+        weightDiffData.labels.forEach((label, index) => {
+          pdf.text(
+            `${label}: ${weightDiffData.datasets[0].data[index].toFixed(1)} kg`,
+            20,
+            yPos
+          );
+          yPos += 10;
+        });
+
+        yPos += 10;
+        pdf.text("Pesagens das Balanças:", 14, yPos);
+        yPos += 10;
+        scaleReadingsData.labels.forEach((label, index) => {
+          pdf.text(
+            `${label}: ${scaleReadingsData.datasets[0].data[index].toFixed(
+              1
+            )} kg`,
+            20,
+            yPos
+          );
+          yPos += 10;
+        });
+
+        // Add calculation results
+        pdf.addPage();
+        pdf.setFontSize(14);
+        pdf.text("Cálculos em Tempo Real", 14, 20);
+
+        const calculoConteudo = document.getElementById("calculoConteudo");
+        const resultados = calculoConteudo.innerText;
+
+        pdf.setFontSize(10);
+        const splitText = pdf.splitTextToSize(resultados, 180);
+        pdf.text(splitText, 14, 30);
+
+        // Add additional information
+        pdf.addPage();
+        pdf.setFontSize(14);
+        pdf.text("Informações Adicionais", 14, 20);
+
+        const tipoVeiculo = document.getElementById("tipoVeiculo").value;
+        const placa = document.getElementById("placa").value;
+        const motorista = document.getElementById("motorista").value;
+        const nomeAssistente = document.getElementById("nomeAssistente").value;
+        const turnoAssistente =
+          document.getElementById("turnoAssistente").value;
+        const nomeSeguranca = document.getElementById("nomeSeguranca").value;
+
+        pdf.setFontSize(12);
+        pdf.text(`Tipo de Veículo: ${tipoVeiculo}`, 14, 30);
+        pdf.text(`Placa: ${placa}`, 14, 40);
+        pdf.text(`Motorista: ${motorista}`, 14, 50);
+        pdf.text(`Nome do Assistente: ${nomeAssistente}`, 14, 60);
+        pdf.text(`Turno do Assistente: ${turnoAssistente}`, 14, 70);
+        pdf.text(`Nome do Segurança: ${nomeSeguranca}`, 14, 80);
+
+        // Save the PDF
+        pdf.save("relatorio_pesagem.pdf");
       }
 
       window.onload = function () {
-        inicializarSelectBalanca();
-        atualizarInfoAdicional();
+        createCharts();
+        mostrarBalancas();
       };
     </script>
   </body>
